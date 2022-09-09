@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="main">
+      <h2>
+        <img
+          src="https://raw.githubusercontent.com/PokeAPI/media/master/logo/pokeapi_256.png"
+          alt=""
+        />
+      </h2>
+      <br />
+      <input
+        id="quantidade"
+        style="
+          width: 100%;
+          height: 40px;
+          padding-left: 10px;
+          border-radius: 15px;
+        "
+        type="text"
+        name="quantidade"
+        placeholder="Insira a quantidae de pokemons.."
+      />
+      <div class="poke-boxes"></div>
+    </div>
+    <script>
+      // config input
+      var quantidade = document.getElementById('quantidade');
+      quantidade.addEventListener('keyup', () => {
+        pegaPokemons(quantidade.value);
+      });
+      pegaPokemons(30);
+      function pegaPokemons(quantidade) {
+        fetch('https://pokeapi.co/api/v2/pokemon?limit=' + quantidade)
+          .then((response) => response.json())
+          .then((allpokemon) => {
+            var pokemons = [];
+
+            allpokemon.results.map((val) => {
+              fetch(val.url)
+                .then((response) => response.json())
+                .then((pokemonSingle) => {
+                  pokemons.push({
+                    nome: val.name,
+                    imagem: pokemonSingle.sprites.front_default,
+                  });
+                  if (pokemons.length == quantidade) {
+                    //fim da requisição
+
+                    var pokemonBoxes = document.querySelector('.poke-boxes');
+                    pokemonBoxes.innerHTML = '';
+                    // console.log(pokemons);
+                    pokemons.map(function (val) {
+                      pokemonBoxes.innerHTML +=
+                        `
+
+                    <div class="poke-box">
+                      <img
+                        src="` +
+                        val.imagem +
+                        `" />
+                      <p>` +
+                        val.nome +
+                        `</p>
+                    </div>
+                    `;
+                      // console.log(val);
+                    });
+                  }
+                });
+            });
+          });
+      }
+    </script>
+  </body>
+</html>
